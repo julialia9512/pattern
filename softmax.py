@@ -8,12 +8,12 @@ data = mnist["data"]
 print(data.size)
 data = data[0:5]
 target = mnist["target"]
-data = data[0:5]
+target = target[0:5]
 
-# print(data[1])
+print(data[1])
 class_number = np.max(target) + 1
-one_hot = np.eye(class_number)[target] #one_hot_vector of target(use list instead of ndarray for index)
-# print(one_hot[1])
+one_hot = np.eye(class_number)[target.astype(int)] #one_hot_vector of target(use list instead of ndarray for index)
+print(one_hot[1])
 
 def softmax(z):
     e_z = np.exp(z - np.max(z))
@@ -32,7 +32,7 @@ class LogisticRegression(object):
         # self.params = [self.W, self.b]
 
     def train(self):
-        print('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
+        print('$$$$$$')
         for i in range(self.num):
             P = softmax(numpy.dot(self.x, self.W))
             T = one_hot
