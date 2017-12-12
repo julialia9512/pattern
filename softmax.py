@@ -5,8 +5,9 @@ from sklearn import datasets
 mnist = datasets.fetch_mldata('MNIST original', data_home='.')
 
 # print(mnist["data"].shape)
-learningdata = mnist["data"][:60000]
-predictdata = mnist["data"][60000:]
+learningdata = mnist["data"][:60000]/255.0
+print(learningdata[1])
+predictdata = mnist["data"][60000:60010]/255.0
 # print(learningdata.shape)
 # print(predictdata.shape)
 target = mnist["target"][:60000]
@@ -14,10 +15,11 @@ checktarget = mnist["target"][60000:]
 class_number = np.max(target) + 1
 one_hot = np.eye(class_number)[target.tolist()] #one_hot_vector of target(use list instead of ndarray for index)
 
-def softmax(z):
-    e_z = np.exp(z - np.max(z))
-    out = e_z / e_z.sum()
-    return out #P
+def softmax(x):
+    e_x = np.exp(x - np.max(x))
+    print(e_x)
+    out = e_x / e_x.sum()
+    return out
 
 class LogisticRegression:
 
@@ -28,18 +30,19 @@ class LogisticRegression:
         self.W = np.random.rand(784,10)  # initialize W
         self.num = num
 
-        # self.params = [self.W, self.b]
-
     def train(self):
-        print('$$$$$$')
         for i in range(self.num):
-            P = softmax(np.dot(self.x, self.W))
+            print('$$$$$$')
+            print(self.W.shape)
+            print(self.x.shape)
+            P = softmax(np.matmul(self.x, self.W))
+            print(P.shape)
             T = one_hot
-            self.W -= self.lr * np.dot(self.x.T, P-T)
-        print(self.W)
+            self.W -= self.lr * np.matmul(self.x.T, P-T)
+        print(self.W.shape)
 
     def predict(self, x):
-        return softmax(np.dot(x, self.W))
+        return softmax(np.matmul(x, self.W))
 
 NewLearn = LogisticRegression(0.1, learningdata, one_hot, learningdata.shape[1], one_hot.shape[1], 10)
 NewLearn.train()
