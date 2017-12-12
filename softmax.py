@@ -6,8 +6,7 @@ mnist = datasets.fetch_mldata('MNIST original', data_home='.')
 
 # print(mnist["data"].shape)
 learningdata = mnist["data"][:60000]/255.0
-print(learningdata[1])
-predictdata = mnist["data"][60000:60010]/255.0
+predictdata = mnist["data"][60000:]/255.0
 # print(learningdata.shape)
 # print(predictdata.shape)
 target = mnist["target"][:60000]
@@ -17,7 +16,6 @@ one_hot = np.eye(class_number)[target.tolist()] #one_hot_vector of target(use li
 
 def softmax(x):
     e_x = np.exp(x - np.max(x))
-    print(e_x)
     out = e_x / e_x.sum()
     return out
 
@@ -32,18 +30,28 @@ class LogisticRegression:
 
     def train(self):
         for i in range(self.num):
-            print('$$$$$$')
-            print(self.W.shape)
-            print(self.x.shape)
-            P = softmax(np.matmul(self.x, self.W))
-            print(P.shape)
+            P = softmax(np.dot(self.x, self.W))
             T = one_hot
             self.W -= self.lr * np.matmul(self.x.T, P-T)
-        print(self.W.shape)
 
     def predict(self, x):
         return softmax(np.matmul(x, self.W))
 
-NewLearn = LogisticRegression(0.1, learningdata, one_hot, learningdata.shape[1], one_hot.shape[1], 10)
+    def check(self, predicted, label):
+        correct = 0
+        rate = 0
+        for i in range(predicted.shape[0]):
+            print(predicted[i])
+            print(predicted[i].argmax())
+            print(label[i])
+            if predicted[i].argmax() == label[i]:
+                correct += 1
+        rate = correct/predicted.shape[0]
+        print(rate)
+        return rate
+
+
+NewLearn = LogisticRegression(0.00005, learningdata, one_hot, learningdata.shape[1], one_hot.shape[1], 100)
 NewLearn.train()
-print(NewLearn.predict(predictdata))
+predicted = NewLearn.predict(predictdata)
+NewLearn.check(predicted, checktarget)
